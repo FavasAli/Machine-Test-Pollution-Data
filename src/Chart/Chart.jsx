@@ -1,7 +1,8 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 /**
  * Sample for scatter series
  */
+
 import {
   ChartComponent,
   SeriesCollectionDirective,
@@ -24,19 +25,44 @@ const SAMPLE_CSS = `
 
 const Chart = () => {
   const [dataValues, setDataValues] = useState([])
-  const [city, setcity] = useState("")
+  const [cityy, setcity] = useState("")
+  const [cities, setcities] = useState([])
   const [date, setDate] = useState("")
-  console.log(date)
-  // useEffect(() => {
-  //   window.alert(" ")
-  // }, [])
+  // console.log(date)
+  useEffect(() => {
+    const getCities = async () => {
+      try {
+        const { data } = await axios.get(
+          `    https://api.openaq.org/v2/cities?limit=100&page=1&offset=0&sort=asc&country=IN&order_by=city`,
+          {
+            headers: {
+              accept: "application/json",
+            },
+          }
+        )
+        console.log("cities", data.results)
+        let record = data.results.map((item) => {
+          let arr = {
+            city: item.city,
+          }
+          return arr
+        })
+        console.log(record, "cityyyy")
+        setcities(record)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getCities()
+  }, [])
 
   const getData = async () => {
     try {
       const { data } = await axios.get(
         // "https://api.openaq.org/v2/measurements?date_to=2022-09-29T15%3A10%3A00%2B00%3A00&limit=100&page=1&offset=0&sort=desc&parameter=pm25&radius=1000&city=Agra&order_by=datetime",
         // `https://api.openaq.org/v1/measurements?date_to=${date}&limit=100&page=1&offset=0&sort=desc&radius=1000&city=${city}&order_by=datetime`,
-        `https://api.openaq.org/v1/measurements?date_from=2000-01-01T00%3A00%3A00%2B00%3A00&date_to=${date}&limit=100&page=1&offset=0&sort=desc&parameter=co&radius=1000&country=IN&city=${city}&order_by=datetime`,
+        // `https://api.openaq.org/v1/measurements?date_from=2000-01-01T00%3A00%3A00%2B00%3A00&date_to=${date}&limit=100&page=1&offset=0&sort=desc&parameter=co&radius=1000&country=IN&city=${cityy}&order_by=datetime`,
+        `https://api.openaq.org/v2/measurements?date_from=2022-09-25T07%3A10%3A00-08%3A00&date_to=${date}&limit=100&page=1&offset=0&sort=asc&parameter=co&radius=1000&country=IN&city=${cityy}&location=Sector-3B%20Avas%20Vikas%20Colony%2C%20Agra%20-%20UPPCB&order_by=city&entity=government&value_from=1500&value_to=2000`,
         {
           headers: {
             accept: "application/json",
@@ -60,13 +86,8 @@ const Chart = () => {
   getData()
 
   return (
-    <div className="control-pane" style={{ marginTop: "1rem" }}>
+    <div className="control-pane" style={{ marginTop: "rem" }}>
       <div>
-        {" "}
-        <p style={{textAlign:"right",  color: "red" }}>
-          In the chart you will get the data two or three days before the date given in
-          the calendar
-        </p>
         <br />
       </div>{" "}
       <h2 style={{ textAlign: "center" }}>Carbon monoxide (Co)</h2>
@@ -77,14 +98,15 @@ const Chart = () => {
           paddingRight: "200px",
         }}
       >
-        <p>Search City (in Capitalization Eg:- Agra)</p>
-        <input
-          type="text"
-          value={city}
-          onChange={(e) => setcity(e.target.value)}
-          autoFocus
-        />
-        
+
+        <select value={cityy} onChange={e=>{setcity(e.target.value)}}>
+          {cities &&
+            cities.map((item) => (
+              <>
+                <option>{item.city}</option>
+              </>
+            ))}
+        </select>
         <input
           type="date"
           style={{ float: "right" }}
@@ -94,8 +116,6 @@ const Chart = () => {
           onChange={(e) => setDate(e.target.value)}
         ></input>
       </div>
-      
-    
       <style>{SAMPLE_CSS}</style>
       <div className="control-section">
         <ChartComponent
