@@ -1,12 +1,13 @@
 import  Chart  from "./Chart/Chart"
-import Hh from "./Chart/Resharts"
+import Resharts from "./Chart/Resharts"
 
 
 function App() {
+  
   return (
     <>
-      <Chart />
-      {/* <Resharts/> */}
+      {/* <Chart /> */}
+      <Resharts/>
     </>
   )
 }

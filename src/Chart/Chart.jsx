@@ -27,7 +27,8 @@ const Chart = () => {
   const [dataValues, setDataValues] = useState([])
   const [cityy, setcity] = useState("")
   const [cities, setcities] = useState([])
-  const [date, setDate] = useState("")
+  const [fromDate, setFromDate] = useState("")
+  const [toDate, setToDate] = useState("")
   // console.log(date)
   useEffect(() => {
     const getCities = async () => {
@@ -62,7 +63,9 @@ const Chart = () => {
         // "https://api.openaq.org/v2/measurements?date_to=2022-09-29T15%3A10%3A00%2B00%3A00&limit=100&page=1&offset=0&sort=desc&parameter=pm25&radius=1000&city=Agra&order_by=datetime",
         // `https://api.openaq.org/v1/measurements?date_to=${date}&limit=100&page=1&offset=0&sort=desc&radius=1000&city=${city}&order_by=datetime`,
         // `https://api.openaq.org/v1/measurements?date_from=2000-01-01T00%3A00%3A00%2B00%3A00&date_to=${date}&limit=100&page=1&offset=0&sort=desc&parameter=co&radius=1000&country=IN&city=${cityy}&order_by=datetime`,
-        `https://api.openaq.org/v2/measurements?date_from=2022-09-25T07%3A10%3A00-08%3A00&date_to=${date}&limit=100&page=1&offset=0&sort=asc&parameter=co&radius=1000&country=IN&city=${cityy}&location=Sector-3B%20Avas%20Vikas%20Colony%2C%20Agra%20-%20UPPCB&order_by=city&entity=government&value_from=1500&value_to=2000`,
+        // `https://api.openaq.org/v2/measurements?date_from=2022-09-25T07%3A10%3A00-08%3A00&date_to=${date}&limit=100&page=1&offset=0&sort=asc&parameter=co&radius=1000&country=IN&city=${cityy}&location=Sector-3B%20Avas%20Vikas%20Colony%2C%20Agra%20-%20UPPCB&order_by=city&entity=government&value_from=1500&value_to=2000`,
+        // `https://api.openaq.org/v2/measurements?date_from=${fromDate}&date_to=${toDate}&limit=100&page=1&offset=0&sort=asc&parameter=co&radius=1000&country=IN&city=${cityy}&location=Sector-3B%20Avas%20Vikas%20Colony%2C%20Agra%20-%20UPPCB&order_by=city&entity=government&value_from=1500&value_to=2000`,
+        `https://api.openaq.org/v2/measurements?date_from=${fromDate}&date_to=${toDate}&limit=100&page=1&offset=0&sort=asc&parameter=co&radius=1000&country=IN&city=${cityy}&order_by=datetime`,
         {
           headers: {
             accept: "application/json",
@@ -77,7 +80,7 @@ const Chart = () => {
         }
         return arr
       })
-      console.log(record)
+      console.log(record,'recordrecordrecord')
       setDataValues(record)
     } catch (error) {
       console.log(error)
@@ -98,23 +101,48 @@ const Chart = () => {
           paddingRight: "200px",
         }}
       >
-
-        <select value={cityy} onChange={e=>{setcity(e.target.value)}}>
-          {cities &&
-            cities.map((item) => (
-              <>
-                <option>{item.city}</option>
-              </>
-            ))}
-        </select>
-        <input
-          type="date"
-          style={{ float: "right" }}
-          id="birthday"
-          name="birthday"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        ></input>
+        <div style={{display:"flex",justifyContent:"space-between"}} className="row">
+          <div className="col">
+          <p >Select a city</p>
+            <select
+              value={cityy}
+              onChange={(e) => {
+                setcity(e.target.value)
+              }}
+            >
+              {cities &&
+                cities.map((item) => (
+                  <>
+                    <option>{item.city}</option>
+                  </>
+                ))}
+            </select>
+          </div>
+          <div className="col">
+            <div>
+              <input
+                type="date"
+                style={{ float: "right" }}
+                id="birthday"
+                name="birthday"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+              ></input>
+              <p >From Date</p>
+            </div>
+            <div>
+              <input
+                type="date"
+                style={{ float: "right" }}
+                id="birthday"
+                name="birthday"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+              ></input>
+              <p>To Date</p>
+            </div>
+          </div>
+        </div>
       </div>
       <style>{SAMPLE_CSS}</style>
       <div className="control-section">
